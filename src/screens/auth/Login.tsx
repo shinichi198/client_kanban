@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Form, Input, Typography } from "antd";
+import { Button, Card, Checkbox, Form, Input, Space, Typography } from "antd";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import SocialLogin from "./components/SocialLogin";
@@ -43,14 +43,14 @@ const Login = () => {
               },
             ]}
           >
-            <Input.Password allowClear maxLength={100} />
+            <Input.Password maxLength={100} />
           </Form.Item>
         </Form>
         <div className="row">
           <div className="col">
             <Checkbox
-              value={isRemember}
-              onChange={(val) => setIsRemember(val.target.value)}
+              checked={isRemember}
+              onChange={(val) => setIsRemember(val.target.checked)}
             >
               Remember
             </Checkbox>
@@ -70,6 +70,12 @@ const Login = () => {
           </Button>
         </div>
         <SocialLogin />
+        <div className="mt-4 text-center">
+          <Space>
+            <Text>Don't have an account?</Text>
+            <Link to={"/sign-up"}>Sign up</Link>
+          </Space>
+        </div>
       </Card>
     </>
   );
