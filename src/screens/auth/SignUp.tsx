@@ -1,16 +1,27 @@
-import { Button, Card, Form, Input, Space, Typography } from "antd";
+import { Button, Card, Form, Input, message, Space, Typography } from "antd";
 import React, { useState } from "react";
 import SocialLogin from "./components/SocialLogin";
 import { Link } from "react-router-dom";
+import handleAPI from "../../apis/handleAPI";
 const { Title, Text, Paragraph } = Typography;
 const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const handleSigup = (values: {
+  const handleSigup = async (values: {
     name: string;
     email: string;
     passowrd: string;
   }) => {
-    console.log(values);
+    setIsLoading(true);
+    const api = `/auth/register`;
+    try {
+      const res = await handleAPI(api, values, "post");
+      console.log(res);
+    } catch (error: any) {
+      console.log(error);
+      message.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
   const [form] = Form.useForm();
   return (
@@ -66,6 +77,17 @@ const SignUp = () => {
                 required: true,
                 message: "Enter your password",
               },
+              () => ({
+                validator: (_, value) => {
+                  if (value.length < 6) {
+                    return Promise.reject(
+                      new Error("Mat khau phai chua it nhat 6 ki tu")
+                    );
+                  } else {
+                    return Promise.resolve();
+                  }
+                },
+              }),
             ]}
           >
             <Input.Password placeholder="Enter your password" />
@@ -73,6 +95,7 @@ const SignUp = () => {
         </Form>
         <div className="mt-4 mb-3">
           <Button
+            loading={isLoading}
             type="primary"
             style={{ width: "100%" }}
             size="large"
