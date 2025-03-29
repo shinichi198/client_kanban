@@ -3,9 +3,14 @@ import React, { useState } from "react";
 import SocialLogin from "./components/SocialLogin";
 import { Link } from "react-router-dom";
 import handleAPI from "../../apis/handleAPI";
+import { useDispatch } from "react-redux";
+import { addAuth } from "../../redux/reducers/authReducer";
+import { localDataNames } from "../../constants/appInfo";
 const { Title, Text, Paragraph } = Typography;
 const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const dispatch = useDispatch();
   const handleSigup = async (values: {
     name: string;
     email: string;
@@ -14,11 +19,15 @@ const SignUp = () => {
     setIsLoading(true);
     const api = `/auth/register`;
     try {
-      const res = await handleAPI(api, values, "post");
-      console.log(res);
+      const res: any = await handleAPI(api, values, "post");
+      if (res.data) {
+        messageApi.error(res.message);
+        //localStorage.setItem(localDataNames.authData, JSON.stringify(res.data));
+        dispatch(addAuth(res.data));
+      }
     } catch (error: any) {
-      console.log(error);
-      message.error(error.message);
+      console.log(error.message);
+      messageApi.error(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -26,6 +35,7 @@ const SignUp = () => {
   const [form] = Form.useForm();
   return (
     <>
+      {contextHolder}
       <Card>
         <div className="text-center">
           <img

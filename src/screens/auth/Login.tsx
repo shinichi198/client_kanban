@@ -1,17 +1,49 @@
-import { Button, Card, Checkbox, Form, Input, Space, Typography } from "antd";
-import React, { useState } from "react";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Form,
+  Input,
+  message,
+  Space,
+  Typography,
+} from "antd";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import SocialLogin from "./components/SocialLogin";
+import handleAPI from "../../apis/handleAPI";
+import { useDispatch } from "react-redux";
+import { addAuth } from "../../redux/reducers/authReducer";
+import { localDataNames } from "../../constants/appInfo";
 const { Title, Paragraph, Text } = Typography;
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRemember, setIsRemember] = useState(false);
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const handleLogin = (values: { email: string; password: string }) => {
-    console.log(values);
+  const [messageApi, contextHolder] = message.useMessage();
+  const handleLogin = async (values: { email: string; password: string }) => {
+    setIsLoading(true);
+    const api = `/auth/login`;
+    try {
+      const user: any = await handleAPI(api, values, "post");
+      if (user) {
+        messageApi.success(user.message);
+        dispatch(addAuth(user.data));
+        localStorage.setItem(
+          localDataNames.authData,
+          JSON.stringify(user.data)
+        );
+      }
+    } catch (error: any) {
+      messageApi.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>
+      {contextHolder}
       <Card>
         <div className="text-center">
           <Title level={2}>Log in to your account</Title>
@@ -69,7 +101,7 @@ const Login = () => {
             Login
           </Button>
         </div>
-        <SocialLogin />
+        <SocialLogin isRemember={isRemember} />
         <div className="mt-4 text-center">
           <Space>
             <Text>Don't have an account?</Text>
