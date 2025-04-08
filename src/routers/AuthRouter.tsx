@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
-import { Login, SignUp } from "../screens/auth";
+import { Login, SignUp } from "../screens";
 import { Typography } from "antd";
 const { Text, Title } = Typography;
 const AuthRouter = () => {

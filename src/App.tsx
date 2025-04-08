@@ -16,7 +16,7 @@ function App() {
     <ConfigProvider
       theme={{
         token: {
-          colorTextHeading: "#1570EF",
+          // colorTextHeading: "#1570EF",
         },
         components: {},
       }}

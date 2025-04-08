@@ -1,17 +1,26 @@
 import axios from "axios";
 import queryString from "query-string";
-const baseURL = `http://192.168.1.7:3001`;
+import { localDataNames } from "../constants/appInfo";
+const baseURL = `http://192.168.1.11:3001`;
+
+const getAccesstoken = () => {
+  const res = localStorage.getItem(localDataNames.authData);
+  return res ? JSON.parse(res).token : "";
+};
+
 const axiosClient = axios.create({
   baseURL,
   paramsSerializer: (params) => queryString.stringify(params),
 });
 
 axiosClient.interceptors.request.use(async (config: any) => {
+  const accesstoken = getAccesstoken();
   config.headers = {
-    Authorization: "",
+    Authorization: `Bear ${accesstoken}`,
     Accept: "application/json",
     ...config.headers,
   };
+  console.log(config);
   return { ...config, data: config.data ?? null };
 });
 axiosClient.interceptors.response.use(
